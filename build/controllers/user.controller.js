@@ -58,20 +58,21 @@ class UserController {
             if (success) {
                 res.status(200).json({
                     status: success,
-                    messege: 'user Update successfully',
+                    message: 'User updated successfully',
                     data: updatedUser,
                 });
             }
             else {
-                res.json({
-                    error: 'User Not Update'
+                res.status(500).json({
+                    error: 'User not updated',
                 });
             }
         }
         catch (error) {
-            res.json({
-                statuscode: req.statusCode,
-                error: error
+            console.error('Error updating user:', error);
+            res.status(500).json({
+                statusCode: res.statusCode,
+                error: 'Internal Server Error',
             });
         }
     };

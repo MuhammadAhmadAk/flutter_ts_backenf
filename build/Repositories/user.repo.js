@@ -46,16 +46,17 @@ exports.createUserRepo = createUserRepo;
 const updateUserRepo = async (userId, updateUser) => {
     try {
         const result = await user_model_1.default.findByIdAndUpdate({ uid: userId }, updateUser, { new: true });
-        console.log(result);
+        console.log('Update Result:', result);
         if (result) {
             return true;
         }
         else {
+            console.error('Update failed: No matching user found.');
             return false;
         }
     }
     catch (error) {
-        console.log(error);
+        console.error('Error updating user:', error);
         return false;
     }
 };

@@ -7,16 +7,16 @@ class TweetController {
         const tweetId = req.body.tweetId;
         try {
             const Tweet = await (0, tweet_repo_1.getTweetRepo)(tweetId);
-            if (Tweet) {
-                res.status(200).json({
-                    status: true,
-                    data: Tweet
+            if (!Tweet) {
+                res.status(404).json({
+                    status: false,
+                    message: "Tweet not found",
                 });
             }
             else {
-                res.json({
-                    statuscode: req.statusCode,
-                    error: 'Tweet Not found'
+                res.status(200).json({
+                    status: true,
+                    data: Tweet,
                 });
             }
         }
@@ -32,15 +32,22 @@ class TweetController {
         try {
             const success = await (0, tweet_repo_1.createTweetRepo)(tweet);
             if (success) {
-                res.status(200).json({
-                    status: success,
-                    messege: 'Tweet created successfully',
-                    data: tweet,
-                });
+                const userUpdateSuccess = await (0, tweet_repo_1.upadateUserwithtweetIdRepo)(tweet.adminId, tweet.content);
+                if (userUpdateSuccess) {
+                    res.status(200).json({
+                        status: success,
+                        messege: 'Tweet created successfully',
+                        data: tweet,
+                    });
+                }
+                else {
+                    res.status(500).json({
+                        error: 'Tweet Not created'
+                    });
+                }
             }
             else {
-                res.json({
-                    statuscode: req.statusCode,
+                res.status(500).json({
                     error: 'Tweet Not created'
                 });
             }
@@ -78,7 +85,7 @@ class TweetController {
         }
     };
     static deleteTweet = async (req, res) => {
-        const tweetId = req.body.TweetId;
+        const tweetId = req.body.tweetId;
         try {
             const success = await (0, tweet_repo_1.deleteTweetRepo)(tweetId);
             if (success) {
@@ -89,14 +96,13 @@ class TweetController {
             }
             else {
                 res.json({
-                    statuscode: req.statusCode,
                     error: 'Tweet Not Delete'
                 });
             }
         }
         catch (error) {
             res.json({
-                statuscode: req.statusCode,
+                statuscode: res.statusCode,
                 error: error
             });
         }
